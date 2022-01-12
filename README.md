@@ -15,4 +15,6 @@ The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ## Screenshots
+<img src="https://github.com/ChathuraSam/facial-recognition-web-app/blob/main/public/screenshots/Screen1.png?raw=true" width="700">
 
+<img src="https://github.com/ChathuraSam/facial-recognition-web-app/blob/main/public/screenshots/Screen2.png?raw=true" width="700">
