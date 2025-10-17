@@ -1,5 +1,5 @@
-import React from 'react';
-import './faceRecognition.css'
+import React from "react";
+import "./faceRecognition.css";
 
 const FaceRecognition = ({ imgSrc, boxData }) => {
   const imageDivName = "inputImage";
@@ -7,10 +7,11 @@ const FaceRecognition = ({ imgSrc, boxData }) => {
   const width = 520;
   const height = 280;
 
-//   console.log(boxData);
+  //   console.log(boxData);
 
   const boxes = boxData.map((box, index) => {
-    const { top_row, left_col, bottom_row, right_col } = box.region_info.bounding_box;
+    const { top_row, left_col, bottom_row, right_col } =
+      box.region_info.bounding_box;
     return (
       <div
         key={index}
@@ -21,12 +22,9 @@ const FaceRecognition = ({ imgSrc, boxData }) => {
           top: top_row * height,
           bottom: bottom_row * height,
         }}
-      >
-      </div>
+      ></div>
     );
-
-    
-});
+  });
 
   /**
    * leftCol: clarifaiFace.left_col * width,
@@ -37,13 +35,7 @@ const FaceRecognition = ({ imgSrc, boxData }) => {
 
   return (
     <div className="tc ma mt2 absolute">
-      <img
-        id="inputImage"
-        src={imgSrc}
-        alt=""
-        width={width}
-        height={height}
-      />
+      <img id="inputImage" src={imgSrc} alt="" width={width} height={height} />
       <h1>No of faces identified: {boxData.length}</h1>
     </div>
   );
