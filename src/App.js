@@ -228,7 +228,7 @@ export default function App() {
       ) : (
         <div>
           {" "}
-          <Rank />
+          {/* <Rank /> */}
           <ImageLinkForm
             imageUrl={imageUrl}
             onInputChange={onInputChange}
