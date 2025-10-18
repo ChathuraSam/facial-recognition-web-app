@@ -18,7 +18,7 @@ const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
 export default function App() {
   const [input, setInput] = useState();
   const [imageUrl, setImageUrl] = useState(
-    "https://assets.weforum.org/article/image/XaHpf_z51huQS_JPHs-jkPhBp0dLlxFJwt-sPLpGJB0.jpg"
+    "https://www.svgrepo.com/show/508699/landscape-placeholder.svg"
   );
   const [box, setBox] = useState();
   const [route, setRoute] = useState("");
@@ -81,8 +81,10 @@ export default function App() {
 
     // Use the local proxy server to avoid CORS issues
     const proxyUrl = "http://localhost:3001/api/clarifai/face-detection";
+    const prodUrl =
+      "https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs";
 
-    fetch(proxyUrl, requestOptions)
+    fetch(prodUrl, requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
