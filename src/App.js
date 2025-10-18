@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import Navigation from "./components/navigation/Navigation";
 import ImageLinkForm from "./components/imageLinkForm/ImageLinkForm";
@@ -11,7 +11,9 @@ import Signin from "./components/Signin/Signin";
 const PAT = "3ec6a31fb1644f72944f591a8ee7442a";
 const USER_ID = "ud3bzt4aic9m";
 const APP_ID = "face-detection-app";
+
 const MODEL_ID = "face-detection";
+const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
 
 export default function App() {
   const [input, setInput] = useState();
@@ -51,7 +53,7 @@ export default function App() {
     console.log("submit button clicked");
     setImageUrl(input);
 
-    const raw = JSON.stringify({
+    const requestData = {
       user_app_id: {
         user_id: USER_ID,
         app_id: APP_ID,
@@ -65,23 +67,62 @@ export default function App() {
           },
         },
       ],
-    });
+    };
+
     const requestOptions = {
       method: "POST",
       headers: {
         Accept: "application/json",
         Authorization: "Key " + PAT,
+        "Content-Type": "application/json",
       },
-      body: raw,
+      body: JSON.stringify(requestData),
     };
 
-    fetch(
-      "https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((json) => json.outputs[0].data.regions)
-      .then((boxData) => setBoxData(boxData));
+    // Use the local proxy server to avoid CORS issues
+    const proxyUrl = "http://localhost:3001/api/clarifai/face-detection";
+
+    fetch(proxyUrl, requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((result) => {
+        if (
+          result.outputs &&
+          result.outputs[0] &&
+          result.outputs[0].data &&
+          result.outputs[0].data.regions
+        ) {
+          setBoxData(result.outputs[0].data.regions);
+
+          // Optional: Log the face detection results
+          const regions = result.outputs[0].data.regions;
+          regions.forEach((region) => {
+            const boundingBox = region.region_info.bounding_box;
+            const topRow = boundingBox.top_row.toFixed(3);
+            const leftCol = boundingBox.left_col.toFixed(3);
+            const bottomRow = boundingBox.bottom_row.toFixed(3);
+            const rightCol = boundingBox.right_col.toFixed(3);
+
+            region.data.concepts.forEach((concept) => {
+              const name = concept.name;
+              const value = concept.value.toFixed(4);
+              console.log(
+                `${name}: ${value} BBox: ${topRow}, ${leftCol}, ${bottomRow}, ${rightCol}`
+              );
+            });
+          });
+        } else {
+          console.error("Unexpected response structure:", result);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error detecting faces. Please try again.");
+      });
   };
 
   const onRouteChange = (route) => {
@@ -98,7 +139,7 @@ export default function App() {
 
   return (
     <div className="App">
-      {/* <Particles
+      <Particles
         className="particles"
         id="tsparticles"
         init={particlesInit}
@@ -180,7 +221,7 @@ export default function App() {
           },
           detectRetina: true,
         }}
-      /> */}
+      />
       <Navigation onRouteChange={onRouteChange} />
       {route === "signin" ? (
         <Signin onRouteChange={onRouteChange} />
